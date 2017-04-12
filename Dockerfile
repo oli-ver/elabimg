@@ -1,12 +1,12 @@
 # elabftw in docker, without MySQL
-FROM alpine:3.5
+FROM alpine:edge
 MAINTAINER Nicolas CARPi <nicolas.carpi@curie.fr>
 
 # select version or branch here
 ENV ELABFTW_VERSION hypernext
 
 # install nginx and php-fpm
-RUN apk add --update \
+RUN apk upgrade -U -a && apk add --update \
     openjdk8-jre \
     nginx \
     libressl \
@@ -25,6 +25,8 @@ RUN apk add --update \
     php7-phar \
     php7-ctype \
     git \
+    curl \
+    coreutils \
     supervisor && rm -rf /var/cache/apk/* && ln -s /usr/bin/php7 /usr/bin/php
 
 # clone elabftw repository in /elabftw
@@ -33,9 +35,9 @@ RUN git clone --depth 1 -b $ELABFTW_VERSION https://github.com/elabftw/elabftw.g
 WORKDIR /elabftw
 
 # install composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-    && php composer-setup.php \
-    && php -r "unlink('composer-setup.php');"
+RUN echo "$(curl -sS https://composer.github.io/installer.sig) -" > composer-setup.php.sig \
+    && curl -sS https://getcomposer.org/installer | tee composer-setup.php | sha384sum -c composer-setup.php.sig \
+    && php composer-setup.php && rm composer-setup.php*
 
 # install composer dependencies
 RUN /elabftw/composer.phar install --no-dev
