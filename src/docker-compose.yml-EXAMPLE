@@ -5,7 +5,7 @@
 
 # our first container is nginx + php-fpm + elabftw
 web:
-    image: elabftw/elabimg
+    image: elabftw/dev
     restart: always
     container_name: elabftw
     # drop some capabilities
@@ -39,9 +39,9 @@ web:
         # host:container
         - "443:443"
     volumes:
-        # this is where you will keep the uploaded files persistently
-        # host:container
-        - /var/elabftw/web:/elabftw/uploads
+        # /!\/!\/!\/!\/!\ EDIT THE LINE BELOW /!\/!\/!\/!\/!\
+        - /home/<YOUR USERNAME>/elabdev/elabftw:/elabftw
+        # /!\/!\/!\/!\/!\ EDIT THE LINE ABOVE /!\/!\/!\/!\/!\
         # if you've enabled letsencrypt, uncomment the line below
         # path to the folder with SSL certificates (must contain fullchain.pem and privkey.pem)
         # host:container
