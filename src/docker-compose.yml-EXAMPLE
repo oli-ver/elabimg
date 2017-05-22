@@ -25,8 +25,15 @@ web:
         - DB_USER=elabftw
         # need to change
         - DB_PASSWORD=secr3t
+        # ---------------------------------------------------
+        # /!\/!\/!\/!\/!\ EDIT THE LINE BELOW /!\/!\/!\/!\/!\
+
         # get your secret key from https://demo.elabftw.net/install/generateSecretKey.php
         - SECRET_KEY=
+
+        # /!\/!\/!\/!\/!\ EDIT THE LINE ABOVE /!\/!\/!\/!\/!\
+        # ---------------------------------------------------
+
         # optional: change to your server name in nginx config
         - SERVER_NAME=localhost
         # optional: disable https, use this to have an http server listening on port 443
@@ -37,11 +44,18 @@ web:
     ports:
         # if you want elabftw to run on a different port, change the first number
         # host:container
-        - "443:443"
+        - "3148:443"
     volumes:
+
+        # ---------------------------------------------------
         # /!\/!\/!\/!\/!\ EDIT THE LINE BELOW /!\/!\/!\/!\/!\
+
+        # should be $dev/elabftw:/elabftw
         - /home/<YOUR USERNAME>/elabdev/elabftw:/elabftw
+
         # /!\/!\/!\/!\/!\ EDIT THE LINE ABOVE /!\/!\/!\/!\/!\
+        # ---------------------------------------------------
+
         # if you've enabled letsencrypt, uncomment the line below
         # path to the folder with SSL certificates (must contain fullchain.pem and privkey.pem)
         # host:container
