@@ -5,7 +5,7 @@
 
 # our first container is nginx + php-fpm + elabftw
 web:
-    image: elabftw/dev
+    image: elabftw/elabimg:dev
     restart: always
     container_name: elabftw
     # drop some capabilities
