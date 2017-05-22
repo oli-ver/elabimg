@@ -97,7 +97,8 @@ phpConf() {
 	sed -i -e "s;session.save_path = \"/tmp\";session.save_path = \"/sessions\";g" /etc/php7/php.ini
 	mkdir -p /sessions
     # enable opcache
-    sed -i -e "s/;opcache.enable=1/opcache.enable=1/" /etc/php7/php.ini
+    # disabled for dev image
+    #sed -i -e "s/;opcache.enable=1/opcache.enable=1/" /etc/php7/php.ini
 	chown nginx:nginx /sessions
 }
 

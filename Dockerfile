@@ -43,19 +43,6 @@ RUN apk upgrade -U -a && apk add --update \
 # install gmagick
 RUN pecl install gmagick-2.0.4RC1 && echo "extension=gmagick.so" >> /etc/php7/php.ini
 
-# clone elabftw repository in /elabftw
-RUN git clone --depth 1 -b $ELABFTW_VERSION https://github.com/elabftw/elabftw.git /elabftw && chown -R nginx:nginx /elabftw
-
-WORKDIR /elabftw
-
-# install composer
-RUN echo "$(curl -sS https://composer.github.io/installer.sig) -" > composer-setup.php.sig \
-    && curl -sS https://getcomposer.org/installer | tee composer-setup.php | sha384sum -c composer-setup.php.sig \
-    && php composer-setup.php && rm composer-setup.php*
-
-# install composer dependencies
-RUN /elabftw/composer.phar install --no-dev
-
 # nginx will run on port 443
 EXPOSE 443
 
