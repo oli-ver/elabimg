@@ -22,6 +22,7 @@ RUN apk upgrade -U -a && apk add --update \
     php7-ctype \
     php7-dev \
     php7-dom \
+    php7-gd \
     php7-gettext \
     php7-fileinfo \
     php7-fpm \
