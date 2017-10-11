@@ -1,8 +1,20 @@
-# elabftw in docker, without MySQL
+# elabftw + nginx + php-fpm in a container
 FROM alpine:3.6
-MAINTAINER Nicolas CARPi <nicolas.carpi@curie.fr>
+
+# select version or branch here
+ENV ELABFTW_VERSION hypernext
+
+LABEL org.label-schema.name="elabftw" \
+    org.label-schema.description="Run nginx and php-fpm to serve elabftw" \
+    org.label-schema.url="https://www.elabftw.net" \
+    org.label-schema.vcs-url="https://github.com/elabftw/elabimg" \
+    org.label-schema.version=$ELABFTW_VERSION \
+    org.label-schema.maintainer="nicolas.carpi@curie.fr" \
+    org.label-schema.schema-version="1.0"
 
 # install nginx and php-fpm
+# php7-gd is required by mpdf for transparent png
+# don't put line comments inside this instruction
 RUN apk upgrade -U -a && apk add --update \
     autoconf \
     build-base \
@@ -13,7 +25,6 @@ RUN apk upgrade -U -a && apk add --update \
     git \
     graphicsmagick-dev \
     openssl \
-    #libressl \
     libtool \
     nginx \
     openjdk8-jre \
@@ -38,10 +49,21 @@ RUN apk upgrade -U -a && apk add --update \
     php7-zip \
     php7-zlib \
     supervisor && \
-    # install gmagick
     pecl install gmagick-2.0.4RC1 && echo "extension=gmagick.so" >> /etc/php7/php.ini && \
-    # remove stuff needed by previous command
     apk del autoconf build-base libtool php7-dev && rm -rf /var/cache/apk/*
+
+# clone elabftw repository in /elabftw
+RUN git clone --depth 1 -b $ELABFTW_VERSION https://github.com/elabftw/elabftw.git /elabftw && chown -R nginx:nginx /elabftw
+
+WORKDIR /elabftw
+
+# install composer
+RUN echo "$(curl -sS https://composer.github.io/installer.sig) -" > composer-setup.php.sig \
+    && curl -sS https://getcomposer.org/installer | tee composer-setup.php | sha384sum -c composer-setup.php.sig \
+    && php composer-setup.php && rm composer-setup.php*
+
+# install composer dependencies
+RUN /elabftw/composer.phar install --no-dev -a
 
 # nginx will run on port 443
 EXPOSE 443
@@ -57,10 +79,3 @@ CMD ["/run.sh"]
 # define mountable directories
 VOLUME /elabftw
 VOLUME /ssl
-
-LABEL org.label-schema.name="elabftw" \
-    org.label-schema.description="Run nginx and php-fpm to serve elabftw" \
-    org.label-schema.url="https://www.elabftw.net" \
-    org.label-schema.vcs-url="https://github.com/elabftw/elabimg" \
-    org.label-schema.version=$ELABFTW_VERSION \
-    org.label-schema.schema-version="1.0"

@@ -11,18 +11,25 @@ getEnv() {
 	disable_https=${DISABLE_HTTPS:-false}
     enable_letsencrypt=${ENABLE_LETSENCRYPT:-false}
 	secret_key=${SECRET_KEY}
+    max_php_memory=${MAX_PHP_MEMORY:-256M}
 }
 
 # fullchain.pem and privkey.pem should be in a volume linked to /ssl
 generateCert() {
     if [ ! -f /etc/nginx/certs/server.crt ]; then
+
+        # here we generate a random CN because of this bug:
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1204670
+        # https://bugzilla.mozilla.org/show_bug.cgi?id=1056341
+        # this way there is no more hangs
+        randcn=$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 12 | xargs)
         openssl req \
             -new \
             -newkey rsa:4096 \
             -days 9999 \
             -nodes \
             -x509 \
-            -subj "/C=FR/ST=France/L=Paris/O=elabftw/CN=localhost" \
+            -subj "/C=FR/ST=France/L=Paris/O=elabftw/CN=$randcn" \
             -keyout /etc/nginx/certs/server.key \
             -out /etc/nginx/certs/server.crt
     fi
@@ -64,6 +71,8 @@ nginxConf() {
 	sed -i -e "s/localhost/$server_name/g" /etc/nginx/conf.d/elabftw.conf
     # fix upload permissions
     chown -R nginx:nginx /var/lib/nginx
+    # remove the listen on IPv6 found in the default server conf file
+    sed -i -e "s/listen \[::\]:80/#listen \[::\]:80/" /etc/nginx/conf.d/default.conf
 }
 
 phpfpmConf() {
@@ -81,7 +90,7 @@ phpfpmConf() {
     # increase max number of simultaneous requests
     sed -i -e "s/pm.max_children = 5/pm.max_children = 50/g" /etc/php7/php-fpm.d/www.conf
     # allow using more memory
-    sed -i -e "s/;php_admin_value[memory_limit] = 32M/php_admin_value[memory_limit] = 256M/" /etc/php7/php-fpm.d/www.conf
+    sed -i -e "s/;php_admin_value\[memory_limit\] = 32M/php_admin_value\[memory_limit\] = ${MAX_PHP_MEMORY}/" /etc/php7/php-fpm.d/www.conf
 }
 
 phpConf() {
