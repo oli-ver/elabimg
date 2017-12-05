@@ -38,11 +38,11 @@ generateCert() {
 }
 
 # generate Diffie-Hellman parameter for DHE ciphersuites
-generateDh() {
-    if [ ! -f /etc/nginx/certs/dhparam.pem ]; then
-        openssl dhparam -out /etc/nginx/certs/dhparam.pem 2048
-    fi
-}
+#generateDh() {
+#if [ ! -f /etc/nginx/certs/dhparam.pem ]; then
+#        openssl dhparam -out /etc/nginx/certs/dhparam.pem 2048
+#    fi
+#}
 
 nginxConf() {
 	# Switch http or https
@@ -56,7 +56,7 @@ nginxConf() {
         if (! $enable_letsencrypt); then
             generateCert
         fi
-        generateDh
+        sh /etc/nginx/generate-dhparam.sh
 		# activate an HTTPS server listening on port 443
 		ln -s /etc/nginx/https.conf /etc/nginx/conf.d/elabftw.conf
         if ($enable_letsencrypt); then
@@ -105,9 +105,12 @@ phpConf() {
     sed -i -e "s/;session.cookie_secure\s*=/session.cookie_secure = true/" /etc/php7/php.ini
     sed -i -e "s/session.use_strict_mode\s*=\s*0/session.use_strict_mode = 1/" /etc/php7/php.ini
 	# the sessions are stored in a separate dir
-	sed -i -e "s;session.save_path = \"/tmp\";session.save_path = \"/sessions\";g" /etc/php7/php.ini
+	sed -i -e "s:;session.save_path = \"/tmp\":session.save_path = \"/sessions\":" /etc/php7/php.ini
 	mkdir -p /sessions
 	chown nginx:nginx /sessions
+    chmod 700 /sessions
+    # disable url_fopen http://php.net/allow-url-fopen
+    sed -i -e "s/allow_url_fopen = On/allow_url_fopen = Off/" /etc/php7/php.ini
     # enable opcache
     # disabled for dev image
     #sed -i -e "s/;opcache.enable=1/opcache.enable=1/" /etc/php7/php.ini
@@ -115,6 +118,14 @@ phpConf() {
     sed -i -e "s/;opcache.enable=1/opcache.enable=1/" /etc/php7/php.ini
     # config for timezone, use : because timezone will contain /
     sed -i -e "s:;date.timezone =:date.timezone = $php_timezone:" /etc/php7/php.ini
+    # enable open_basedir to restrict PHP's ability to read files
+    # use # for separator because we cannot use : ; / or _
+    sed -i -e "s#;open_basedir =#open_basedir = /elabftw/:/tmp/#" /etc/php7/php.ini
+    # use longer session id length
+    sed -i -e "s/session.sid_length = 26/session.sid_length = 42/" /etc/php7/php.ini
+    # disable some dangerous functions that we don't use
+    sed -i -e "s/disable_functions =/disable_functions = php_uname, getmyuid, getmypid, passthru, leak, listen, diskfreespace, tmpfile, link, ignore_user_abord, shell_exec, dl, set_time_limit, system, highlight_file, source, show_source, fpaththru, virtual, posix_ctermid, posix_getcwd, posix_getegid, posix_geteuid, posix_getgid, posix_getgrgid, posix_getgrnam, posix_getgroups, posix_getlogin, posix_getpgid, posix_getpgrp, posix_getpid, posix_getppid, posix_getpwnam, posix_getpwuid, posix_getrlimit, posix_getsid, posix_getuid, posix_isatty, posix_kill, posix_mkfifo, posix_setegid, posix_seteuid, posix_setgid, posix_setpgid, posix_setsid, posix_setuid, posix_times, posix_ttyname, posix_uname, proc_open, proc_close, proc_get_status, proc_nice, proc_terminate, phpinfo/" /etc/php7/php.ini
+
 }
 
 elabftwConf() {
