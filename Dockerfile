@@ -57,7 +57,7 @@ RUN apk upgrade -U -a && apk add --update \
     apk del autoconf build-base libtool php7-dev && rm -rf /var/cache/apk/*
 
 # clone elabftw repository in /elabftw
-RUN git clone --depth 1 -b $ELABFTW_VERSION https://github.com/elabftw/elabftw.git /elabftw && chown -R nginx:nginx /elabftw
+#RUN git clone --depth 1 -b $ELABFTW_VERSION https://github.com/elabftw/elabftw.git /elabftw && chown -R nginx:nginx /elabftw
 
 WORKDIR /elabftw
 
@@ -66,8 +66,10 @@ RUN echo "$(curl -sS https://composer.github.io/installer.sig) -" > composer-set
     && curl -sS https://getcomposer.org/installer | tee composer-setup.php | sha384sum -c composer-setup.php.sig \
     && php composer-setup.php && rm composer-setup.php*
 
+RUN mv /elabftw/composer.phar /usr/bin/composer
+
 # install composer dependencies
-RUN /elabftw/composer.phar install
+#RUN /elabftw/composer.phar install
 
 # nginx will run on port 443
 EXPOSE 443
