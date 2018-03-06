@@ -120,7 +120,8 @@ phpConf() {
 	chown nginx:nginx /sessions
     chmod 700 /sessions
     # disable url_fopen http://php.net/allow-url-fopen
-    sed -i -e "s/allow_url_fopen = On/allow_url_fopen = Off/" /etc/php7/php.ini
+    # not for dev
+    #sed -i -e "s/allow_url_fopen = On/allow_url_fopen = Off/" /etc/php7/php.ini
     # enable opcache
     # disabled for dev image
     #sed -i -e "s/;opcache.enable=1/opcache.enable=1/" /etc/php7/php.ini
@@ -130,7 +131,8 @@ phpConf() {
     sed -i -e "s:;date.timezone =:date.timezone = $php_timezone:" /etc/php7/php.ini
     # enable open_basedir to restrict PHP's ability to read files
     # use # for separator because we cannot use : ; / or _
-    sed -i -e "s#;open_basedir =#open_basedir = /elabftw/:/tmp/:/root/.composer#" /etc/php7/php.ini
+    # added some dirs for dev
+    sed -i -e "s#;open_basedir =#open_basedir = /elabftw/:/tmp/:/root/.composer:/usr/bin/composer#" /etc/php7/php.ini
     # use longer session id length
     sed -i -e "s/session.sid_length = 26/session.sid_length = 42/" /etc/php7/php.ini
     # disable some dangerous functions that we don't use
