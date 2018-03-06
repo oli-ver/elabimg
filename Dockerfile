@@ -2,7 +2,7 @@
 FROM alpine:3.6
 
 # select version or branch here
-ENV ELABFTW_VERSION hypernext
+ENV ELABFTW_VERSION v2.0
 
 LABEL org.label-schema.name="elabftw" \
     org.label-schema.description="Run nginx and php-fpm to serve elabftw" \
@@ -14,6 +14,7 @@ LABEL org.label-schema.name="elabftw" \
 
 # install nginx and php-fpm
 # php7-gd is required by mpdf for transparent png
+# php7-tokenizer and php7-xmlwriter are for dev only
 # don't put line comments inside this instruction
 RUN apk upgrade -U -a && apk add --update \
     autoconf \
@@ -47,6 +48,8 @@ RUN apk upgrade -U -a && apk add --update \
     php7-pear \
     php7-phar \
     php7-session \
+    php7-tokenizer \
+    php7-xmlwriter \
     php7-zip \
     php7-zlib \
     supervisor && \
@@ -64,7 +67,7 @@ RUN echo "$(curl -sS https://composer.github.io/installer.sig) -" > composer-set
     && php composer-setup.php && rm composer-setup.php*
 
 # install composer dependencies
-RUN /elabftw/composer.phar install --no-dev -a
+RUN /elabftw/composer.phar install
 
 # nginx will run on port 443
 EXPOSE 443
