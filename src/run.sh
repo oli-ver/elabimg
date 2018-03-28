@@ -100,7 +100,7 @@ phpfpmConf() {
 	sed -i -e "s/;listen.group = nobody/listen.group = nginx/g" /etc/php7/php-fpm.d/www.conf
     sed -i -e "s/nobody/nginx/g" /etc/php7/php-fpm.d/www.conf
     # increase max number of simultaneous requests
-    sed -i -e "s/pm.max_children = 5/pm.max_children = ${php_max_children}/g" /etc/php7/php-fpm.d/www.conf
+    sed -i -e "s/pm.max_children = (0-9)+/pm.max_children = ${php_max_children}/g" /etc/php7/php-fpm.d/www.conf
     # allow using more memory
     sed -i -e "s/;php_admin_value\[memory_limit\] = 32M/php_admin_value\[memory_limit\] = ${max_php_memory}/" /etc/php7/php-fpm.d/www.conf
 }
@@ -111,9 +111,9 @@ phpConf() {
 	sed -i -e "s/upload_max_filesize\s*=\s*2M/upload_max_filesize = ${max_upload_size}/g" /etc/php7/php.ini
 	sed -i -e "s/post_max_size\s*=\s*8M/post_max_size = 100M/g" /etc/php7/php.ini
     # we want a safe cookie/session
-    sed -i -e "s/session.cookie_httponly =/session.cookie_httponly = true/" /etc/php7/php.ini
-    sed -i -e "s/;session.cookie_secure\s*=/session.cookie_secure = true/" /etc/php7/php.ini
-    sed -i -e "s/session.use_strict_mode\s*=\s*0/session.use_strict_mode = 1/" /etc/php7/php.ini
+    sed -i -e "s/session.cookie_httponly.*/session.cookie_httponly = true/" /etc/php7/php.ini
+    sed -i -e "s/;session.cookie_secure.*/session.cookie_secure = true/" /etc/php7/php.ini
+    sed -i -e "s/session.use_strict_mode.*/session.use_strict_mode = 1/" /etc/php7/php.ini
 	# the sessions are stored in a separate dir
 	sed -i -e "s:;session.save_path = \"/tmp\":session.save_path = \"/sessions\":" /etc/php7/php.ini
 	mkdir -p /sessions
@@ -136,7 +136,7 @@ phpConf() {
     # use longer session id length
     sed -i -e "s/session.sid_length = 26/session.sid_length = 42/" /etc/php7/php.ini
     # disable some dangerous functions that we don't use
-    sed -i -e "s/disable_functions =/disable_functions = php_uname, getmyuid, getmypid, passthru, leak, listen, diskfreespace, tmpfile, link, ignore_user_abord, shell_exec, dl, set_time_limit, system, highlight_file, source, show_source, fpaththru, virtual, posix_ctermid, posix_getcwd, posix_getegid, posix_geteuid, posix_getgid, posix_getgrgid, posix_getgrnam, posix_getgroups, posix_getlogin, posix_getpgid, posix_getpgrp, posix_getpid, posix_getppid, posix_getpwnam, posix_getpwuid, posix_getrlimit, posix_getsid, posix_getuid, posix_isatty, posix_kill, posix_mkfifo, posix_setegid, posix_seteuid, posix_setgid, posix_setpgid, posix_setsid, posix_setuid, posix_times, posix_ttyname, posix_uname, proc_open, proc_close, proc_get_status, proc_nice, proc_terminate, phpinfo/" /etc/php7/php.ini
+    sed -i -e "s/disable_functions =/disable_functions = php_uname, getmyuid, getmypid, passthru, leak, listen, diskfreespace, tmpfile, link, ignore_user_abord, shell_exec, dl, system, highlight_file, source, show_source, fpaththru, virtual, posix_ctermid, posix_getcwd, posix_getegid, posix_geteuid, posix_getgid, posix_getgrgid, posix_getgrnam, posix_getgroups, posix_getlogin, posix_getpgid, posix_getpgrp, posix_getpid, posix_getppid, posix_getpwnam, posix_getpwuid, posix_getrlimit, posix_getsid, posix_getuid, posix_isatty, posix_kill, posix_mkfifo, posix_setegid, posix_seteuid, posix_setgid, posix_setpgid, posix_setsid, posix_setuid, posix_times, posix_ttyname, posix_uname, proc_open, proc_close, proc_get_status, proc_nice, proc_terminate, phpinfo/" /etc/php7/php.ini
 
 }
 
