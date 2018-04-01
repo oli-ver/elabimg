@@ -2,7 +2,7 @@
 FROM alpine:3.6
 
 # select version or branch here
-ENV ELABFTW_VERSION v2.0
+ENV ELABFTW_VERSION dev
 
 LABEL org.label-schema.name="elabftw" \
     org.label-schema.description="Run nginx and php-fpm to serve elabftw" \
@@ -55,9 +55,6 @@ RUN apk upgrade -U -a && apk add --update \
     supervisor && \
     pecl install gmagick-2.0.4RC1 && echo "extension=gmagick.so" >> /etc/php7/php.ini && \
     apk del autoconf build-base libtool php7-dev && rm -rf /var/cache/apk/*
-
-# clone elabftw repository in /elabftw
-#RUN git clone --depth 1 -b $ELABFTW_VERSION https://github.com/elabftw/elabftw.git /elabftw && chown -R nginx:nginx /elabftw
 
 WORKDIR /elabftw
 
