@@ -148,7 +148,7 @@ elabftwConf() {
 
 writeConfigFile() {
 	# write config file from env var
-    config_path="/elabftw/web/config.php"
+    config_path="/elabftw/config.php"
 	config="<?php
 	define('DB_HOST', '${db_host}');
 	define('DB_NAME', '${db_name}');
