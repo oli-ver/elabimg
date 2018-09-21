@@ -67,9 +67,6 @@ RUN echo "$(curl -sS https://composer.github.io/installer.sig) -" > composer-set
     && curl -sS https://getcomposer.org/installer | tee composer-setup.php | sha384sum -c composer-setup.php.sig \
     && php composer-setup.php && rm composer-setup.php*
 
-# install dependencies
-RUN /elabftw/composer.phar install --no-dev -a && yarn install --pure-lockfile && yarn run buildall && rm -rf node_modules && yarn cache clean && /elabftw/composer.phar clear-cache
-
 # for dev only, copy composer in $PATH
 RUN cp /elabftw/composer.phar /usr/bin/composer
 
