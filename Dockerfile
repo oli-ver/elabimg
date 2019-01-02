@@ -5,7 +5,7 @@ FROM alpine:3.8
 ENV ELABFTW_VERSION dev
 
 # this is versioning for the container image
-ENV ELABIMG_VERSION 1.0.1
+ENV ELABIMG_VERSION 1.0.2
 
 LABEL org.label-schema.name="elabftw" \
     org.label-schema.description="Run nginx and php-fpm to serve elabftw" \
@@ -44,7 +44,6 @@ RUN apk upgrade -U -a && apk add --update \
     php7-fpm \
     php7-json \
     php7-mbstring \
-    php7-mcrypt \
     php7-opcache \
     php7-openssl \
     php7-pdo_mysql \
