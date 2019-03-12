@@ -19,7 +19,7 @@ LABEL org.label-schema.name="elabftw" \
 # php7-gd is required by mpdf for transparent png
 # php7-tokenizer and php7-xmlwriter are for dev only
 # don't put line comments inside this instruction
-RUN apk upgrade -U -a && apk add --update \
+RUN apk upgrade -U -a && apk add --no-cache \
     autoconf \
     bash \
     build-base \
@@ -59,7 +59,7 @@ RUN apk upgrade -U -a && apk add --update \
     yarn \
     supervisor && \
     pecl install gmagick-2.0.4RC1 && echo "extension=gmagick.so" >> /etc/php7/php.ini && \
-    apk del autoconf build-base libtool php7-dev && rm -rf /var/cache/apk/*
+    apk del autoconf build-base libtool php7-dev
 
 WORKDIR /elabftw
 
