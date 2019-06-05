@@ -2,9 +2,11 @@
 # use : "docker-compose up -d" to start containers
 # https://hub.docker.com/r/elabftw/elabimg/
 # https://www.elabftw.net
+version: '3'
 
 # our first container is nginx + php-fpm + elabftw
-web:
+services:
+  web:
     image: elabftw/elabimg:dev
     restart: always
     container_name: elabftw
@@ -78,9 +80,11 @@ web:
         # /!\/!\/!\/!\/!\ EDIT THE LINE ABOVE /!\/!\/!\/!\/!\
         # ---------------------------------------------------
 
-    links:
-        - mysql
-mysql:
+    networks:
+      - elabftw-net
+
+  # the mysql database image
+  mysql:
     image: mysql:5.7
     restart: always
     container_name: mysql
@@ -112,6 +116,13 @@ mysql:
         # - D:\Users\Nico\elab-data\mysql:/var/lib/mysql
         # host:container
         - /var/elabftw/mysql:/var/lib/mysql
-
         # /!\/!\/!\/!\/!\ EDIT THE LINE ABOVE /!\/!\/!\/!\/!\
         # ---------------------------------------------------
+    expose:
+      - 3306
+    networks:
+      - elabftw-net
+
+# the internal elabftw network
+networks:
+  elabftw-net:
