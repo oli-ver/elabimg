@@ -140,7 +140,7 @@ phpConf() {
     # enable opcache
     # disabled for dev image
     #sed -i -e "s/;opcache.enable=1/opcache.enable=1/" /etc/php7/php.ini
-	chown nginx:nginx /sessions
+    chown nginx:nginx /sessions
     sed -i -e "s/;opcache.enable=1/opcache.enable=1/" /etc/php7/php.ini
     # config for timezone, use : because timezone will contain /
     sed -i -e "s:;date.timezone =:date.timezone = $php_timezone:" /etc/php7/php.ini
