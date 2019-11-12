@@ -1,5 +1,14 @@
 # Container image version
 
+## 1.3.0
+
+* Add an option to define the MySQL port
+
+## 1.2.0
+
+* Fix nginx configuration for max file size allowed for upload
+* Add ENABLE_IPV6 option for ipv6 in nginx
+
 ## 1.1.0
 
 * Add redis support for session handling
