@@ -136,6 +136,19 @@ services:
     networks:
       - elabftw-net
 
+    # uncomment this part if you want to have phpmyadmin running too
+    #phpmyadmin:
+    #    image: phpmyadmin/phpmyadmin
+    #    container_name: phpmyadmin
+    #    environment:
+    #        - PMA_PORT=3307
+    #    links:
+    #        - mysql:db
+    #    ports:
+    #        - "8080:80"
+    #    networks:
+    #        - elabftw-net
+
 # the internal elabftw network
 networks:
   elabftw-net:
