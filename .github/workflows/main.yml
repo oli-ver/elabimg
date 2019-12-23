@@ -13,5 +13,5 @@ jobs:
     - name: Build and push the Docker image
       run: |
         docker build . --file Dockerfile --tag ${{ secrets.DOCKER_USER }}/elabimg:$(date +%s) --tag ${{ secrets.DOCKER_USER }}/elabimg:latest
-        docker login --username ${{ secrets.DOCKER_USER }} --password ${{ secrets.DOCKER_PASSWORD }}
+        docker login --username ${{ secrets.DOCKER_USER }} --password ${{ secrets.DOCKER_TOKEN }}
         docker push orevil/elabimg
