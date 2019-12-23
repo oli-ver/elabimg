@@ -158,7 +158,7 @@ phpConf() {
     # enable open_basedir to restrict PHP's ability to read files
     # use # for separator because we cannot use : ; / or _
     # added some dirs for dev
-    sed -i -e "s#;open_basedir =#open_basedir = /elabftw/:/tmp/:/root/.composer:/usr/bin/composer:/usr/bin/unzip#" /etc/php7/php.ini
+    sed -i -e "s#;open_basedir =#open_basedir = /.dockerenv:/elabftw/:/tmp/:/root/.composer:/usr/bin/composer:/usr/bin/unzip#" /etc/php7/php.ini
     # use longer session id length
     sed -i -e "s/session.sid_length = 26/session.sid_length = 42/" /etc/php7/php.ini
     # disable some dangerous functions that we don't use
